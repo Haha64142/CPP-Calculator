@@ -15,7 +15,6 @@ bool isOperator(char op) {
     return op == '+' || op == '-' || op == '*' || op == '/' || op == '%';
 }
 
-// Fix this function
 double evaluate(std::vector<std::string> inputTokens, std::vector<int> inputTokenTypes) {
     std::vector<std::string> tokens;
     std::vector<int> tokenTypes; // 0 for number, 1 for standard operator, 2 for single number operator
@@ -237,10 +236,15 @@ double simplifyExpression(std::string expression) {
     std::string currentToken = "";
     std::string prevChar = "";
     bool isNegative = false;
+    bool isDecimal = false;
+    bool addLeadZero = false;
     
     for (int i = 0; i < expression.length() && validExpression; i++) {
         // Determines type of current token
-        if (isNumber(expression[i])) {
+        if (expression[i] == '.') {
+            currentType = 0;
+            isDecimal = true;
+        } else if (isNumber(expression[i])) {
             currentType = 0;
         } else if (isOperator(expression[i])) {
             currentType = 1;
@@ -259,14 +263,22 @@ double simplifyExpression(std::string expression) {
         switch (currentType) {
             case 0:
                 if (isNegative) {
-                    currentToken = "-" + std::string(1, expression[i]);
+                    currentToken = "-";
                     isNegative = false;
-                } else {
-                    currentToken += expression[i];
                 }
+                if (isDecimal && prevType != 0) {
+                    currentToken += "0";
+                } 
+                currentToken += expression[i];
+                isDecimal = false;
                 break;
             
             case 1:
+                if (prevChar == ".") {
+                    errorMessage = "Syntax Error: Invalid operator after decimal";
+                    validExpression = false;
+                    continue;
+                }
                 if (prevType != 1 && prevType != -1) {
                     currentToken = expression[i];
                     break;
@@ -315,6 +327,22 @@ double simplifyExpression(std::string expression) {
     }
     tokens.push_back(currentToken);
     tokenTypes.push_back(prevType);
+
+    bool containsDecimal = false;
+    for (int i = 0; i < tokens.size() && validExpression; i++) {
+        containsDecimal = false;
+        for (int j = 0; j < tokens[i].length() && validExpression; j++) {
+            if (tokens[i][j] == '.') {
+                if (containsDecimal) {
+                    validExpression = false;
+                    errorMessage = "Syntax Error: Unexpected decimal";
+                    continue;
+                } else {
+                    containsDecimal == true;
+                }
+            }
+        }
+    }
 
     if (!validExpression) {
         return 0;
@@ -372,5 +400,5 @@ int main() {
 
 // TODO
 // Extras:
-// 4. Add support for decimal numbers
+// 4. Add support for decimal numbers - 75% - just need to make sure the evaluation can handle it
 // 5. Add support for parentheses
