@@ -357,6 +357,8 @@ int main() {
     double output;
 
     while (true) {
+        validExpression = true;
+        errorMessage = "";
         std::cout << "\n";
 
         std::cout << "Enter an expression (q to quit): ";
