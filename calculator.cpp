@@ -338,14 +338,14 @@ double simplifyExpression(std::string expression) {
                     errorMessage = "Syntax Error: Unexpected decimal";
                     continue;
                 } else {
-                    containsDecimal == true;
+                    containsDecimal = true;
                 }
             }
         }
     }
 
     if (!validExpression) {
-        return 0;
+        return 1;
     }
 
     double result = evaluate(tokens, tokenTypes);
@@ -356,18 +356,25 @@ int main() {
     std::string input;
     double output;
 
-    std::cout << "Enter an expression: ";
-    getline(std::cin, input);
+    while (true) {
+        std::cout << "\n";
 
-    output = simplifyExpression(input);
+        std::cout << "Enter an expression (q to quit): ";
+        getline(std::cin, input);
 
-    if (!validExpression) {
-        std::cout << errorMessage << std::endl;
-        return 0;
+        if (input == "q") {
+            return 0;
+        }
+
+        output = simplifyExpression(input);
+
+        if (!validExpression) {
+            std::cout << errorMessage << std::endl;
+            continue;
+        }
+
+        std::cout << output << std::endl;
     }
-
-    std::cout << output << std::endl;
-    return 1;
 }
 
 // Standard Operators:
@@ -376,7 +383,7 @@ int main() {
 // "*" Multiplication
 // "/" Division
 // "//" Floor Division (Truncate towards zero)
-// "%" Modulus
+// "%" Modulus (Converts the numbers to int first)
 
 // Single Number Operators:
 // "++" Increment (2++ = 3)
@@ -400,5 +407,4 @@ int main() {
 
 // TODO
 // Extras:
-// 4. Add support for decimal numbers - 75% - just need to make sure the evaluation can handle it
 // 5. Add support for parentheses
