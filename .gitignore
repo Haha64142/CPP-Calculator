@@ -1,4 +1,2 @@
-calculator.code-workspace
-calculator.exe
-calculatorDebug.exe
-.vscode
+*
+!calculator.cpp
